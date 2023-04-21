@@ -24,4 +24,15 @@ async def func():
     return {"result": True,"message":"Published" }
 
 
+#Récupérer le message
+@mqtt.on_connect()
+def connect(client, flags, rc, properties):
+    mqtt.client.subscribe("enzo/led/message")  # subscribing mqtt topic
+    print("Connected: ", client, flags, rc, properties)
+
+@mqtt.subscribe("enzo/led/message")
+async def message_to_topic(client, topic, payload, qos, properties):
+    print("Received message to specific topic: ", topic, payload.decode())
+
+
 
