@@ -19,18 +19,27 @@ def subscribe(client, mid, qos, properties):
 #Publish la couleur sur l'ESP32 en dur
 @app.get("/test")
 async def func():
-    mqtt.publish("enzo/led/couleur", "255 0 0 test") #publishing mqtt topic
+    mqtt.publish("Enzo/led/couleur", "255 0 0 test") #publishing mqtt topic
 
     return {"result": True,"message":"Published" }
-
 
 #Récupérer le message
 @mqtt.on_connect()
 def connect(client, flags, rc, properties):
-    mqtt.client.subscribe("enzo/led/message")  # subscribing mqtt topic
+    mqtt.client.subscribe("Enzo/led/message")  # subscribing mqtt topic
     print("Connected: ", client, flags, rc, properties)
 
-@mqtt.subscribe("enzo/led/message")
+@mqtt.subscribe("Enzo/led/message")
+async def message_to_topic(client, topic, payload, qos, properties):
+    print("Received message to specific topic: ", topic, payload.decode())
+
+#Récupérer la taille du panneau
+@mqtt.on_connect()
+def connect(client, flags, rc, properties):
+    mqtt.client.subscribe("Enzo/led/panneau")  # subscribing mqtt topic
+    print("Connected: ", client, flags, rc, properties)
+
+@mqtt.subscribe("Enzo/led/panneau")
 async def message_to_topic(client, topic, payload, qos, properties):
     print("Received message to specific topic: ", topic, payload.decode())
 
